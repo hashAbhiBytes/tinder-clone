@@ -1,13 +1,14 @@
-const PORT = 8000
-const express = require('express')
-const {MongoClient} = require('mongodb')
-const {v4: uuidv4} = require('uuid')
-const jwt = require('jsonwebtoken')
-const cors = require('cors')
-const bcrypt = require('bcrypt')
-require('dotenv').config()
+require('dotenv').config(); // Load environment variables at the top
 
-const uri = 'mongodb+srv://anandabhimanyuyo:6XQb42adKr4vLMyC@tinderclonedb.ihvxtay.mongodb.net/?retryWrites=true&w=majority&appName=TinderCloneDB';
+const PORT = process.env.PORT || 8000;
+const express = require('express');
+const { MongoClient } = require('mongodb');
+const { v4: uuidv4 } = require('uuid');
+const jwt = require('jsonwebtoken');
+const cors = require('cors');
+const bcrypt = require('bcrypt');
+
+const uri = process.env.MONGO_URI;
 
 const app = express()
 app.use(cors())
