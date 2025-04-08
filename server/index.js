@@ -1,4 +1,4 @@
-require('dotenv').config(); // Load environment variables at the top
+require('dotenv').config();
 
 const PORT = process.env.PORT || 8000;
 const express = require('express');

@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@react-spring/web": "^9.4.5",
+    "@react-spring/web": "^9.7.5",
     "axios": "^1.8.4",
     "mongodb": "^6.15.0"
   }
