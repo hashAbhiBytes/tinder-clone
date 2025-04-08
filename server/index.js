@@ -15,7 +15,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Helper: Connect to MongoDB
+// Helper: Connect to MongoDBā
 const getClient = () => {
     return new MongoClient(uri, {
         tls: true,
@@ -237,15 +237,22 @@ app.get('/messages', async (req, res) => {
 // Add a message
 app.post('/message', async (req, res) => {
     const client = getClient();
-    const message = req.body.message;
+    const { from_userId, to_userId, message } = req.body;
 
     try {
         await client.connect();
         const db = client.db('app-data');
         const messages = db.collection('messages');
 
-        const result = await messages.insertOne(message);
-        res.json(result);
+        const newMessage = {
+            from_userId,
+            to_userId,
+            message,
+            timestamp: new Date()
+        };
+
+        const result = await messages.insertOne(newMessage);
+        res.json(newMessage);
     } catch (err) {
         console.error(err);
         res.status(500).send('Error sending message');
@@ -253,5 +260,6 @@ app.post('/message', async (req, res) => {
         await client.close();
     }
 });
+
 
 app.listen(PORT, () => console.log(`Server running on PORT ${PORT}`));

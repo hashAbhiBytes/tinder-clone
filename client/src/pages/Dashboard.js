@@ -169,8 +169,8 @@ const Dashboard = () => {
         try {
             setIsLoading(true);
             const response = await axios.post('http://localhost:8000/message', {
-                fromUserId: userId,
-                toUserId: currentMatch?.user_id || user.matches[0]?.user_id,
+                from_userId: userId,
+                to_userId: currentMatch?.user_id || user.matches[0]?.user_id,
                 message: newMessage
             });
             setChatMessages([...chatMessages, response.data]);
@@ -349,7 +349,7 @@ const Dashboard = () => {
                                         chatMessages.map((message, index) => (
                                             <div 
                                                 key={index} 
-                                                className={`message ${message.fromUserId === userId ? 'sent' : 'received'}`}
+                                                className={`message ${message.from_userId === userId ? 'sent' : 'received'}`}
                                             >
                                                 <p>{message.message}</p>
                                                 <span className="message-time">
