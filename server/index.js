@@ -7,7 +7,7 @@ const cors = require('cors')
 const bcrypt = require('bcrypt')
 require('dotenv').config()
 
-const uri = process.env.URI
+const uri = 'mongodb+srv://anandabhimanyuyo:6XQb42adKr4vLMyC@tinderclonedb.ihvxtay.mongodb.net/?retryWrites=true&w=majority&appName=TinderCloneDB';
 
 const app = express()
 app.use(cors())
