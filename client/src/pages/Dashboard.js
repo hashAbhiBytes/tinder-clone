@@ -1,4 +1,4 @@
-import TinderCard from '../components/TinderCard';
+import { TinderCardContainer } from '../components/TinderCard';
 import { useEffect, useState } from 'react';
 import ChatContainer from '../components/ChatContainer';
 import { useCookies } from 'react-cookie';
@@ -77,32 +77,124 @@ const Dashboard = () => {
             genderedUser.user_id !== userId
     );
 
+    // CSS Styles
+    const styles = {
+        dashboard: {
+            display: 'flex',
+            justifyContent: 'space-between',
+            maxWidth: '1200px',
+            margin: '0 auto',
+            height: '100vh',
+        },
+        swipeContainer: {
+            width: '70%',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '100%',
+            padding: '20px',
+        },
+        cardContainer: {
+            width: '400px',
+            height: '650px',
+            position: 'relative',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+        },
+        swipe: {
+            position: 'absolute',
+            width: '100%',
+            height: '100%',
+        },
+        card: {
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            width: '380px',
+            height: '480px',
+            borderRadius: '20px',
+            boxShadow: '0 10px 20px rgba(0,0,0,0.2)',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'flex-end',
+            position: 'relative',
+        },
+        cardGradient: {
+            background: 'linear-gradient(to top, rgba(0,0,0,0.8), transparent)',
+            padding: '20px',
+            borderRadius: '0 0 20px 20px',
+        },
+        cardName: {
+            color: 'white',
+            margin: '0',
+            fontSize: '24px',
+        },
+        swipeInfo: {
+            width: '100%',
+            padding: '10px',
+            marginTop: '500px',
+        },
+        swipeNotification: (direction) => ({
+            textAlign: 'center',
+            marginTop: '20px',
+            padding: '10px',
+            background: direction === 'right' ? '#E0F4E0' : '#FFEBEE',
+            color: direction === 'right' ? '#2E7D32' : '#C62828',
+            borderRadius: '20px',
+            fontWeight: 'bold',
+        }),
+    };
+
+    // Add media query styles for mobile
+    if (typeof window !== 'undefined' && window.innerWidth <= 768) {
+        styles.dashboard.flexDirection = 'column';
+        styles.swipeContainer.width = '100%';
+        styles.swipeContainer.height = '65vh';
+        styles.cardContainer.width = '300px';
+        styles.cardContainer.height = '500px';
+        styles.card.width = '280px';
+        styles.card.height = '380px';
+        styles.swipeInfo.marginTop = '400px';
+    }
+
     return (
         <>
             {user && (
-                <div className="dashboard">
+                <div style={styles.dashboard} className="dashboard">
                     <ChatContainer user={user} />
-                    <div className="swipe-container">
-                        <div className="card-container">
+                    <div style={styles.swipeContainer} className="swipe-container">
+                        <div style={styles.cardContainer} className="card-container">
                             {filteredGenderedUsers.map((genderedUser) => (
-                                <TinderCard
+                                <TinderCardContainer
+                                    style={styles.swipe}
                                     className="swipe"
                                     key={genderedUser.user_id}
                                     onSwipe={(dir) => swiped(dir, genderedUser.user_id)}
-                                    onCardLeftScreen={(dir) => outOfFrame(genderedUser.first_name)}
+                                    onCardLeftScreen={() => outOfFrame(genderedUser.first_name)}
+                                    preventSwipe={['up', 'down']}
                                 >
                                     <div
-                                        className="card"
                                         style={{
+                                            ...styles.card,
                                             backgroundImage: `url(${genderedUser.url || 'https://via.placeholder.com/300'})`,
                                         }}
+                                        className="card"
                                     >
-                                        <h3>{genderedUser.first_name}</h3>
+                                        <div style={styles.cardGradient}>
+                                            <h3 style={styles.cardName}>
+                                                {genderedUser.first_name}
+                                            </h3>
+                                        </div>
                                     </div>
-                                </TinderCard>
+                                </TinderCardContainer>
                             ))}
-                            <div className="swipe-info">
-                                {lastDirection && <p>You swiped {lastDirection}</p>}
+                            <div style={styles.swipeInfo} className="swipe-info">
+                                {lastDirection && (
+                                    <p style={styles.swipeNotification(lastDirection)}>
+                                        You swiped {lastDirection}
+                                    </p>
+                                )}
                             </div>
                         </div>
                     </div>

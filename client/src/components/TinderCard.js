@@ -1,4 +1,4 @@
-import React, { useRef, useImperativeHandle, forwardRef, useEffect } from 'react';
+import React, { useRef, useImperativeHandle, forwardRef, useEffect, useState } from 'react';
 import { useSpring, animated as Animated } from '@react-spring/web';
 
 const to = (x = 0, y = 0, rot = 0, scale = 1) => ({
@@ -26,15 +26,19 @@ const TinderCard = forwardRef(({
   const start = useRef({ x: 0, y: 0 });
   const last = useRef({ x: 0, y: 0, t: 0 });
   const [{ x, y, rot, scale }, api] = useSpring(() => to());
+  const [windowSize, setWindowSize] = useState({ width: window.innerWidth, height: window.innerHeight });
+
+  // Function to perform a swipe
+  const performSwipe = (dir = 'right') => {
+    const xDist = dir === 'left' ? -1000 : dir === 'right' ? 1000 : 0;
+    const yDist = dir === 'up' ? -1000 : dir === 'down' ? 1000 : 0;
+    api.start(to(xDist, yDist, xDist / 10));
+    onSwipe(dir);
+    setTimeout(() => onCardLeftScreen(dir), 600);
+  };
 
   useImperativeHandle(ref, () => ({
-    swipe(dir = 'right') {
-      const xDist = dir === 'left' ? -1000 : dir === 'right' ? 1000 : 0;
-      const yDist = dir === 'up' ? -1000 : dir === 'down' ? 1000 : 0;
-      api.start(to(xDist, yDist, xDist / 10));
-      onSwipe(dir);
-      setTimeout(() => onCardLeftScreen(dir), 600);
-    }
+    swipe: performSwipe
   }));
 
   const calcDirection = (dx, dy) => {
@@ -71,24 +75,31 @@ const TinderCard = forwardRef(({
     const dy = clientY - start.current.y;
     const dir = calcDirection(dx, dy);
 
-    const velocity = (Math.sqrt((dx) ** 2 + (dy) ** 2)) / (Date.now() - last.current.t);
-
     if (
       (Math.abs(dx) > swipeThreshold || Math.abs(dy) > swipeThreshold) &&
       !preventSwipe.includes(dir) &&
       flickOnSwipe
     ) {
-      const xForce = dir === 'left' ? -1000 : dir === 'right' ? 1000 : 0;
-      const yForce = dir === 'up' ? -1000 : dir === 'down' ? 1000 : 0;
-      api.start(to(xForce, yForce, dx / 10));
-      onSwipe(dir);
-      setTimeout(() => onCardLeftScreen(dir), 600);
+      performSwipe(dir);
     } else {
       api.start(to()); // Reset position
     }
   };
 
-  // Attach listeners
+  // Handle window resize
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight
+      });
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Attach listeners for touch/mouse events
   useEffect(() => {
     const el = elementRef.current;
     if (!el) return;
@@ -97,24 +108,34 @@ const TinderCard = forwardRef(({
     const touchMove = (e) => handleGestureMove(e.touches[0].clientX, e.touches[0].clientY);
     const touchEnd = (e) => handleGestureEnd(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
 
-    const mouseStart = (e) => handleGestureStart(e.clientX, e.clientY);
+    const mouseStart = (e) => {
+      handleGestureStart(e.clientX, e.clientY);
+      // Add document-level event listeners for better drag handling
+      document.addEventListener('mousemove', mouseMove);
+      document.addEventListener('mouseup', mouseEnd);
+    };
+    
     const mouseMove = (e) => handleGestureMove(e.clientX, e.clientY);
-    const mouseEnd = (e) => handleGestureEnd(e.clientX, e.clientY);
+    
+    const mouseEnd = (e) => {
+      handleGestureEnd(e.clientX, e.clientY);
+      // Remove document-level event listeners
+      document.removeEventListener('mousemove', mouseMove);
+      document.removeEventListener('mouseup', mouseEnd);
+    };
 
     el.addEventListener('touchstart', touchStart);
     el.addEventListener('touchmove', touchMove);
     el.addEventListener('touchend', touchEnd);
     el.addEventListener('mousedown', mouseStart);
-    el.addEventListener('mousemove', mouseMove);
-    el.addEventListener('mouseup', mouseEnd);
 
     return () => {
       el.removeEventListener('touchstart', touchStart);
       el.removeEventListener('touchmove', touchMove);
       el.removeEventListener('touchend', touchEnd);
       el.removeEventListener('mousedown', mouseStart);
-      el.removeEventListener('mousemove', mouseMove);
-      el.removeEventListener('mouseup', mouseEnd);
+      document.removeEventListener('mousemove', mouseMove);
+      document.removeEventListener('mouseup', mouseEnd);
     };
   }, []);
 
@@ -137,4 +158,79 @@ const TinderCard = forwardRef(({
   );
 });
 
-export default TinderCard;
+// Main container component that includes the card and swipe buttons
+const TinderCardContainer = ({ children, ...props }) => {
+  const cardRef = useRef(null);
+  
+  const handleSwipe = (direction) => {
+    if (cardRef.current) {
+      cardRef.current.swipe(direction);
+    }
+  };
+
+  return (
+    <div className="tinder-card-container" style={{
+      position: 'relative',
+      width: '100%', 
+      height: '100%',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center'
+    }}>
+      <div className="card-area" style={{
+        position: 'relative',
+        width: '100%',
+        height: '80%',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center'
+      }}>
+        <TinderCard ref={cardRef} {...props}>
+          {children}
+        </TinderCard>
+      </div>
+      
+      <div className="swipe-buttons" style={{
+        display: 'flex',
+        justifyContent: 'center',
+        gap: '20px',
+        marginTop: '20px'
+      }}>
+        <button 
+          onClick={() => handleSwipe('left')}
+          style={{
+            background: '#FF4136',
+            color: 'white',
+            border: 'none',
+            borderRadius: '50%',
+            width: '60px',
+            height: '60px',
+            fontSize: '24px',
+            cursor: 'pointer',
+            boxShadow: '0 4px 8px rgba(0,0,0,0.2)'
+          }}
+        >
+          ✕
+        </button>
+        <button 
+          onClick={() => handleSwipe('right')}
+          style={{
+            background: '#2ECC40',
+            color: 'white',
+            border: 'none',
+            borderRadius: '50%',
+            width: '60px',
+            height: '60px',
+            fontSize: '24px',
+            cursor: 'pointer',
+            boxShadow: '0 4px 8px rgba(0,0,0,0.2)'
+          }}
+        >
+          ♥
+        </button>
+      </div>
+    </div>
+  );
+};
+
+export { TinderCard, TinderCardContainer };
