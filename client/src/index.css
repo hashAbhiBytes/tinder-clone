@@ -276,19 +276,52 @@ nav .logo-container .logo {
 /*-------- OnBoarding Page --------*/
 .onboarding {
     border-top: solid 1px rgb(213, 213, 213);
+    animation: fadeIn 1s ease-in;
+    background: linear-gradient(135deg, #ffe6f0, #fff5fa);
+    min-height: 100vh;
+    padding: 30px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Fade in animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .onboarding form {
     display: flex;
     justify-content: center;
+    width: 100%;
 }
 
 .onboarding form section {
     display: flex;
     flex-direction: column;
     padding: 20px;
-    width: 35%;
+    width: 40%;
     text-align: start;
+    animation: slideUp 0.8s ease-out;
+}
+
+/* Slide up animation */
+@keyframes slideUp {
+    from {
+        transform: translateY(30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
 }
 
 .onboarding form input {
@@ -297,15 +330,27 @@ nav .logo-container .logo {
     font-size: 15px;
     border: solid 2px rgb(219, 219, 219);
     border-radius: 10px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(255, 192, 203, 0.1);
+}
+
+.onboarding form input:focus {
+    border-color: hotpink;
+    box-shadow: 0 0 10px rgba(255, 105, 180, 0.4);
+    outline: none;
 }
 
 .onboarding form label {
     margin: 10px 0;
+    font-weight: 600;
+    color: #d63384;
+    transition: color 0.3s ease;
 }
 
 .onboarding form .multiple-input-container {
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
 }
 
 .onboarding form input::-webkit-outer-spin-button,
@@ -324,6 +369,7 @@ nav .logo-container .logo {
     border-radius: 10px;
     transition: all 0.3s;
     margin-right: 10px;
+    cursor: pointer;
 }
 
 .onboarding form input[type=radio] {
@@ -331,24 +377,160 @@ nav .logo-container .logo {
 }
 
 .onboarding form input[type=number] {
-    width: 10%;
+    width: 20%;
 }
 
 .onboarding form input[type=radio]:checked + label {
-    border: solid 2px rgb(221, 39, 22);
+    border: solid 2px hotpink;
+    background-color: #ffd1e8;
+    transform: scale(1.05);
+}
+.show-gender-div{
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+.onboarding form input[type=submit] {
+    background-color: hotpink;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 20px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .onboarding form input[type=submit]:hover {
-    background-color: rgb(235, 235, 235);
+    background-color: #ff69b4;
+    transform: scale(1.05);
+    box-shadow: 0 4px 10px rgba(255, 105, 180, 0.4);
 }
 
 .onboarding form input[type=submit]:active {
-    background-color: rgb(226, 115, 115);
+    background-color: #e75480;
+    transform: scale(1);
 }
 
 .onboarding form .photo-container img {
-    width: 100%
+    width: 100%;
+    max-height: 300px;
+    object-fit: cover;
+    border-radius: 10px;
+    animation: fadeIn 1s ease-in;
 }
+.onboarding form label {
+    margin: 10px 0;
+    font-weight: 600;
+    font-size: 15px;
+    color: hotpink;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    text-shadow: 0 0 1px #ff69b4, 0 0 2px #ffc0cb;
+}
+.onboarding-nav {
+    background: linear-gradient(90deg, #ff6ec4, #ffb86c);
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: center; /* centers horizontally */
+    align-items: center;
+    border-bottom: 4px solid #fff0f5;
+    box-shadow: 0 8px 20px rgba(255, 105, 180, 0.3);
+    top: 0;
+    z-index: 1000;
+    animation: fadeInDown 0.6s ease-out;
+  }
+  
+  .onboarding-nav .logo-combo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  
+  .onboarding-nav .logo-icon {
+    width: 48px;
+    height: 48px;
+    animation: pulse 2s infinite ease-in-out;
+  }
+  
+  .onboarding-nav .logo-text {
+    font-family: 'Pacifico', cursive;
+    font-size: 2rem;
+    color: white;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+    letter-spacing: 1.5px;
+    animation: popIn 0.6s ease-in-out;
+  }
+  
+  
+  /* Optional Login Button (if used in other pages) */
+  .onboarding-nav .nav-button {
+    padding: 0.6rem 1.2rem;
+    background: white;
+    color: #ff69b4;
+    font-weight: bold;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .onboarding-nav .nav-button:hover {
+    background: #ffe0ed;
+    color: #ff1493;
+  }
+  
+  /* Animations */
+  @keyframes popIn {
+    0% {
+      transform: scale(0.8);
+      opacity: 0;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes fadeInDown {
+    from {
+      opacity: 0;
+      transform: translateY(-20%);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes pulse {
+    0%, 100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(1.05);
+      opacity: 0.85;
+    }
+  }
+  
+  /* Mobile responsive */
+  @media (max-width: 600px) {
+    .onboarding-nav {
+      flex-direction: column;
+      gap: 1rem;
+    }
+  
+    .onboarding-nav .logo-text {
+      font-size: 1.5rem;
+    }
+  }
+  
+
+    
+    
 
 /*-------- Heart Trail --------*/
 

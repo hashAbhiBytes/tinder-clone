@@ -1,6 +1,5 @@
 import { TinderCardContainer } from '../components/TinderCard';
 import { useEffect, useState, useRef } from 'react';
-// Removed unused ChatContainer import
 import { useCookies } from 'react-cookie';
 import axios from 'axios';
 import PropTypes from 'prop-types';
@@ -9,9 +8,9 @@ const Dashboard = () => {
     const [user, setUser] = useState(null);
     const [genderedUsers, setGenderedUsers] = useState([]);
     // Removed unused lastDirection state
-    const [cookies, , removeCookie] = useCookies(['user']); // Removed unused setCookies
+    const [cookies, , removeCookie] = useCookies(['user']);
     const [currentIndex, setCurrentIndex] = useState(0);
-    const [activeTab, setActiveTab] = useState('swipe'); // 'swipe', 'matches', 'chat'
+    const [activeTab, setActiveTab] = useState('swipe');
     const [matchAnimation, setMatchAnimation] = useState(false);
     const [isEditingProfile, setIsEditingProfile] = useState(false);
     const [editedProfile, setEditedProfile] = useState({});
@@ -102,7 +101,6 @@ const Dashboard = () => {
         if (direction === 'right') {
             updateMatches(swipedUserId);
         }
-        // No need to set lastDirection since it's not used
         setCurrentIndex(index + 1);
     };
 
@@ -211,7 +209,15 @@ const Dashboard = () => {
                                 aria-label="View profile"
                             />
                         </div>
-                        <div className="app-name">Crushin'</div>
+                        
+                        {/* Replace the simple app name with your logo combo */}
+                        <div className="logo-container">
+                            <div className="logo-combo">
+                                <img src={require("../images/logo.png")} alt="logo" className="logo-icon" />
+                                <h1 className="logo-text">CRUSHIN'</h1>
+                            </div>
+                        </div>
+                        
                         <div className="app-actions">
                             <button 
                                 className="logout-btn" 
@@ -227,44 +233,43 @@ const Dashboard = () => {
                     <div className="app-content">
                         {activeTab === 'swipe' && (
                             <div className="swipe-section">
-                                <div className="card-container">
-                                    {filteredGenderedUsers.length > 0 ? (
-                                        filteredGenderedUsers.map((profile, index) => (
-                                            <TinderCardContainer
-                                                ref={(el) => (swipeRef.current[index] = el)}
-                                                className={`swipe-card ${index !== currentIndex ? 'hidden-card' : ''}`}
-                                                key={profile.user_id}
-                                                onSwipe={(dir) => swiped(dir, profile.user_id, index)}
-                                                onCardLeftScreen={() => outOfFrame(profile.first_name)}
-                                                preventSwipe={['up', 'down']}
+                            <div className="card-container">
+                                {filteredGenderedUsers.length > 0 ? (
+                                    filteredGenderedUsers.map((profile, index) => (
+                                        <TinderCardContainer
+                                            ref={(el) => (swipeRef.current[index] = el)}
+                                            className={`swipe-card ${index !== currentIndex ? 'hidden-card' : ''}`}
+                                            key={profile.user_id}
+                                            onSwipe={(dir) => swiped(dir, profile.user_id, index)}
+                                            onCardLeftScreen={() => outOfFrame(profile.first_name)}
+                                            preventSwipe={['up', 'down']}
+                                        >
+                                            <div 
+                                                className="profile-card"
+                                                style={{
+                                                    backgroundImage: `url(${profile.url || 'https://via.placeholder.com/400'})`
+                                                }}
+                                                aria-label={`Profile of ${profile.first_name}`}
                                             >
-                                                <div 
-                                                    className="profile-card"
-                                                    style={{
-                                                        backgroundImage: `url(${profile.url || 'https://via.placeholder.com/400'})`
-                                                    }}
-                                                    aria-label={`Profile of ${profile.first_name}`}
-                                                >
-                                                    <div className="profile-info">
-                                                        <h2>{profile.first_name}</h2>
-                                                        <p className="profile-age">{profile.age || 'Age not specified'}</p>
-                                                        <p className="profile-bio">{profile.about || "No bio yet"}</p>
-                                                    </div>
+                                                <div className="profile-info">
+                                                    <h2>{profile.first_name}</h2>
+                                                    <p className="profile-age">{profile.age || 'Age not specified'}</p>
+                                                    <p className="profile-bio">{profile.about || "No bio yet"}</p>
                                                 </div>
-                                            </TinderCardContainer>
-                                        ))
-                                    ) : (
-                                        <div className="no-profiles">
-                                            <div className="empty-state">
-                                                <span className="empty-icon">🔍</span>
-                                                <h3>No more profiles</h3>
-                                                <p>We're working hard to find more matches for you</p>
                                             </div>
+                                        </TinderCardContainer>
+                                    ))
+                                ) : (
+                                    <div className="no-profiles">
+                                        <div className="empty-state">
+                                            <span className="empty-icon">🔍</span>
+                                            <h3>No more profiles</h3>
+                                            <p>We're working hard to find more matches for you</p>
                                         </div>
-                                    )}
-                                </div>
-
-                                <div className="swipe-buttons">
+                                    </div>
+                                )}
+                            </div>
+                                {/* <div className="swipe-buttons">
                                     <button 
                                         className="swipe-btn dislike" 
                                         onClick={swipeLeft}
@@ -284,7 +289,7 @@ const Dashboard = () => {
                                             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
                                         </svg>
                                     </button>
-                                </div>
+                                </div> */}
                             </div>
                         )}
 
@@ -638,6 +643,30 @@ const Dashboard = () => {
                     font-size: 24px;
                     font-weight: 700;
                     letter-spacing: 1px;
+                }
+                    
+                .logo-container {
+                    flex-shrink: 0;
+                }
+                
+                .logo-combo {
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                }
+                
+                .logo-icon {
+                    width: 40px;
+                    height: 40px;
+                }
+                
+                .logo-text {
+                    font-family: 'Pacifico', cursive;
+                    font-size: 24px;
+                    color: white;
+                    text-shadow: 0 0 10px hotpink, 0 0 20px deeppink;
+                    margin: 0;
+                    padding: 0;
                 }
 
                 .logout-btn {
